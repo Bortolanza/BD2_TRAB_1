@@ -1,0 +1,6 @@
+[ 
+    { "att": "A",   "row":1, "value":20 },
+    { "att": "A",   "row":2, "value":20 },
+    { "att": "B",   "row":1, "value":55 },
+    { "att": "B",   "row":2, "value":30 }
+]
