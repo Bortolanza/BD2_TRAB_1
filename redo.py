@@ -29,19 +29,24 @@ file.close()
 transacoes=[]
 tCommitadas=[]
 tCKPT=[]
+acoes=[]
 
 # Primeira passada pelo arquivo de log para identificar TRANSACOES, COMMITS E CKPT
 linhas = log.split('\n') # remove quebras de linha
 for linha in linhas:
-    linha=linha.split(" ") #separa string da linha por espaço em branco
-    if linha[0]=="start":
-        transacoes.append(linha[1])
-    if linha[0]=="commit":
-        tCommitadas.append(linha[1])
-    if linha[0]=="CKPT":
-        linha=linha[1].replace(')','').replace('(','').split(",") # remove parenteses da string da linha e separa ela pela ","
-        for x in range(len(linha)):
-            tCKPT.append(linha[x])
+    aux=linha.split(" ") #separa string da linha por espaço em branco
+    if aux[0]=="start":
+        transacoes.append(aux[1])
+    if aux[0]=="commit":
+        tCommitadas.append(aux[1])
+    if aux[0]=="CKPT":
+        aux=aux[1].replace(')','').replace('(','').split(",") # remove parenteses da string da linha e separa ela pela ","
+        for x in range(len(aux)):
+            tCKPT.append(aux[x])
+    aux=linha.split(",")
+    if aux[0] in transacoes:
+        acoes.append(aux)
+
 
 print("\nTransacoes Identificadas")
 for x in range(len(transacoes)):
@@ -54,3 +59,8 @@ for x in range(len(tCommitadas)):
 print("\nTransacoes em CHECKPOINT")
 for x in range(len(tCKPT)):
     print(tCKPT[x])
+
+print("\nAcoes")
+for x in range(len(acoes)):
+    print(acoes[x])
+    # Se a transacao da acao estiver na lista de transacoes que devem ser refeitas, fazemos o update com ela!
