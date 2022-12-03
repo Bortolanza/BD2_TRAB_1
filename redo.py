@@ -30,6 +30,7 @@ transacoes=[]
 tCommitadas=[]
 tCKPT=[]
 acoes=[]
+tRedo=[]
 
 # Primeira passada pelo arquivo de log para identificar TRANSACOES, COMMITS E CKPT
 linhas = log.split('\n') # remove quebras de linha
@@ -64,3 +65,21 @@ print("\nAcoes")
 for x in range(len(acoes)):
     print(acoes[x])
     # Se a transacao da acao estiver na lista de transacoes que devem ser refeitas, fazemos o update com ela!
+
+# --- Disclaimer --- 
+# Não sei se a lógica pra selecionar qual as transacoes serão refeitas está certa.
+# Mas pelo oq eu entendi são as transações que são comittadas mas não tao em nenhum checkpoint
+# ------------------
+
+for x in range(len(transacoes)):
+    if transacoes[x] in tCommitadas and transacoes[x] not in tCKPT:
+        tRedo.append(transacoes[x])
+
+print("\nTrasacoes que serão Refeitas:")
+for x in range(len(tRedo)):
+    print(tRedo[x])
+
+print("\nAcoes que serao refeitas")
+for x in range(len(acoes)):
+    if acoes[x][0] in tRedo:
+        print(acoes[x])
