@@ -72,7 +72,7 @@ for x in range(len(acoes)):
 # ------------------
 
 for x in range(len(transacoes)):
-    if transacoes[x] in tCommitadas and transacoes[x] not in tCKPT:
+    if transacoes[x] in tCommitadas and transacoes[x] in tCKPT:
         tRedo.append(transacoes[x])
 
 print("\nTrasacoes que serão Refeitas:")
