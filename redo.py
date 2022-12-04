@@ -1,6 +1,6 @@
 import json
+import dbConnectExec
 
-#Fazer conexao com o BD
 
 # ====== INSERINDO DADOS NO BANCO ===== #
 # ---- utilizando o metadados.json ---- #
@@ -16,6 +16,7 @@ for x in range(len(dados['A'])):
     #Aqui ira o comando para inserir no BD
     print("INSERT INTO table (id,A,B) VALUES ("+str(x+1)+","+str((dados['A'][x]))+","+str((dados['B'][x]))+")")
     #Apos funcao que insere ser feita comentar/remover print acima
+
 
 # ========== REALIZANDO UNDO ========== #
 # -------- utilizando o log.txt ------- #
@@ -83,3 +84,6 @@ print("\nAcoes que serao refeitas")
 for x in range(len(acoes)):
     if acoes[x][0] in tRedo:
         print(acoes[x])
+
+resultSet = dbConnectExec.connectExecuteDatabaseOperation("SELECT VERSION();")
+print("O RESULT SET: ", resultSet)
