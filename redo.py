@@ -1,22 +1,30 @@
 import json
 import dbConnectExec
 
-
 # ====== INSERINDO DADOS NO BANCO ===== #
 # ---- utilizando o metadados.json ---- #
 # ===================================== #
+
+#resultSet = dbConnectExec.connectExecuteDatabaseOperation("TRUNCATE initial;")
+#cursorDB = dbConnectExec.getConnectionCursor(connectionDB)
 
 with open("metadado.json","r") as f: 
     dados = json.load(f) # Pegando os dados do arquivo
 f.close()
 
-dados = dados["INITIAL"] 
+dados = dados["INITIAL"]
+sql = "" 
 
 for x in range(len(dados['A'])):
     #Aqui ira o comando para inserir no BD
-    print("INSERT INTO table (id,A,B) VALUES ("+str(x+1)+","+str((dados['A'][x]))+","+str((dados['B'][x]))+")")
+    print("INSERT INTO initial (id,a,b) VALUES ("+str(x+1)+","+str((dados['A'][x]))+","+  str((dados['B'][x]))+")")
     #Apos funcao que insere ser feita comentar/remover print acima
+    if (sql == ""):
+        sql = "("+str(x+1)+","+str((dados['A'][x]))+","+  str((dados['B'][x]))+")"
+    else:
+        sql = sql + ",("+str(x+1)+","+str((dados['A'][x]))+","+  str((dados['B'][x]))+")"
 
+result = dbConnectExec.execInsert(sql, "initial")
 
 # ========== REALIZANDO UNDO ========== #
 # -------- utilizando o log.txt ------- #
@@ -65,7 +73,7 @@ for x in range(len(tCKPT)):
 print("\nAcoes")
 for x in range(len(acoes)):
     print(acoes[x])
-    # Se a transacao da acao estiver na lista de transacoes que devem ser refeitas, fazemos o update com ela!
+# Se a transacao da acao estiver na lista de transacoes que devem ser refeitas, fazemos o update com ela!
 
 # --- Disclaimer --- 
 # Não sei se a lógica pra selecionar qual as transacoes serão refeitas está certa.
@@ -84,6 +92,3 @@ print("\nAcoes que serao refeitas")
 for x in range(len(acoes)):
     if acoes[x][0] in tRedo:
         print(acoes[x])
-
-resultSet = dbConnectExec.connectExecuteDatabaseOperation("SELECT VERSION();")
-print("O RESULT SET: ", resultSet)

@@ -1,14 +1,18 @@
 import psycopg2
 
 #Fazer conexao com o BD e executar comando
-def connectExecuteDatabaseOperation(sql):
+def connectExecuteDatabaseOperation(sql, type):
     try: 
 
-        # Conecta na base de dados
+        #Conecta na base de dados
         connection = psycopg2.connect(user="postgres",
-                                    password="postgres",
-                                    host="127.0.0.1",
-                                    database="enfe")
+                                      password="postgres",
+                                      host="127.0.0.1",
+                                      port="5432",
+                                      database="enfe")
+
+        #Define commit como acao padrao ao final da conexao
+        connection.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)                              
 
         #Cria um cursor para executar comandos
         cursor = connection.cursor()
@@ -25,4 +29,17 @@ def connectExecuteDatabaseOperation(sql):
         if (connection):
             cursor.close()
             connection.close()
-            return result
+            if (type == 1):
+                return result
+            return 1
+
+def execInsert(sql, table):
+    command = """INSERT INTO """+table+""" (id,a,b) VALUES """ + sql
+    print(command)
+    connectExecuteDatabaseOperation(command, 0)
+
+def execUpdate(sql, table):
+    command = """UPDATE """+table+""" SET """ + sql + """WHERE """
+    print(command)
+    connectExecuteDatabaseOperation(command, 0)    
+
