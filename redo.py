@@ -33,7 +33,7 @@ result = dbConnectExec.execInsert(sql, "initial")
 
 file = open('log.txt', 'rb')
 file.seek(0)
-log = file.read().decode().replace('>', '').replace('<','')
+log = re.sub('>|<', '',file.read().decode()) #.replace('>', '').replace('<','')
 file.close()
 
 transacoes=[]
@@ -51,7 +51,7 @@ for linha in linhas:
     if aux[0]=="commit":
         tCommitadas.append(aux[1])
     if aux[0]=="CKPT":
-        aux=aux[1].replace(')','').replace('(','').split(",") # remove parenteses da string da linha e separa ela pela ","
+        aux=str(re.sub('\(|\)', '', aux[1])).split(",") # replace(')','').replace('(','') remove parenteses da string da linha e separa ela pela ","
         for x in range(len(aux)):
             tCKPT.append(aux[x])
     aux=linha.split(",")
