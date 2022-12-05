@@ -3,7 +3,6 @@ import psycopg2
 #Fazer conexao com o BD e executar comando
 def connectExecuteDatabaseOperation(sql, type):
     try: 
-
         #Conecta na base de dados
         connection = psycopg2.connect(user="postgres",
                                       password="postgres",
@@ -21,25 +20,26 @@ def connectExecuteDatabaseOperation(sql, type):
         cursor.execute(sql)
 
         #Retorna resultado
-        result = cursor.fetchall()
-
-    except (Exception, Error) as error:
-        print("Erro ao conectar com a base")
-    finally:
+        if (type == 1):
+            result = cursor.fetchall()
+    except (Exception, psycopg2.Error) as error:
+        print(error)
+        exit()
+    else:
         if (connection):
             cursor.close()
             connection.close()
-            if (type == 1):
-                return result
-            return 1
+        if (type == 1):
+            return result
+        return 1
 
 def execInsert(sql, table):
     command = 'INSERT INTO '+table+' (id,a,b) VALUES ' + sql
-    print(command)
+    # print(command)
     connectExecuteDatabaseOperation(command, 0)
 
 def execUpdate(sql, condition, table):
-    command = 'UPDATE '+table+' SET ' + sql + ' WHERE ' + condition
-    print(command)
+    command = 'UPDATE '+table+' SET '+sql+' WHERE '+condition
+    # print(command)
     connectExecuteDatabaseOperation(command, 0)    
 

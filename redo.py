@@ -38,7 +38,7 @@ result = dbConnectExec.execInsert(sql, "initial")
 
 file = open('log.txt', 'rb')
 file.seek(0)
-log = re.sub('>|<', '',file.read().decode()) #.replace('>', '').replace('<','')
+log = re.sub('>|<', '',file.read().decode())
 file.close()
 
 transacoes=[]
@@ -56,7 +56,7 @@ for linha in linhas:
     if aux[0]=="commit":
         tCommitadas.append(aux[1])
     if aux[0]=="CKPT":
-        aux=str(re.sub('\(|\)', '', aux[1])).split(",") # replace(')','').replace('(','') remove parenteses da string da linha e separa ela pela ","
+        aux=str(re.sub('\(|\)', '', aux[1])).split(",") # remove parenteses da string da linha e separa ela pela ","
         for x in range(len(aux)):
             tCKPT.append(aux[x])
     aux=linha.split(",")
@@ -110,8 +110,7 @@ for x in range(len(acoes)):
                                                            # Adiciona uma virgula desnecessaria
 
         if acoesValores[4] != valorTabela:                       # Valida se update e necessario e caso sim, realiza
-             dbConnectExec.execUpdate('%s = %s' %(re.sub("'", "", acoesValores[2])
-                                                , re.sub("'", "", acoesValores[4]))
+             dbConnectExec.execUpdate('%s = %s' %(re.sub("'", "", acoesValores[2]), re.sub("'", "", acoesValores[4]))
                                     , 'id = %s' % re.sub("'", "", acoesValores[1]) 
                                     ,'initial')
                                     
