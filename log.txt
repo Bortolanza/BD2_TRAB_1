@@ -12,5 +12,6 @@
 <CKPT (T3,T4,T5)>
 <commit T4>
 <T5,2,A,20,1000>
+<commit T5>
 <T3,2,B,1000,8000>
 <crash>

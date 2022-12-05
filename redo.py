@@ -47,6 +47,10 @@ tCKPT=[]
 acoes=[]
 tRedo=[]
 
+# Possivel brincar de otimizacao, olhando de baixo pra cima o arquivo
+# caso existir CKPT, buscar todas as operacoes ate o start das transacoes dentro da lista do CKPT que sofreram commit
+# para arquivos de log mais longos as checagens extras provavelmente sao mais eficientes 
+
 # Primeira passada pelo arquivo de log para identificar TRANSACOES, COMMITS E CKPT
 linhas = log.split('\n') # remove quebras de linha
 for linha in linhas:
@@ -81,11 +85,6 @@ for x in range(len(acoes)):
     print(acoes[x])
 # Se a transacao da acao estiver na lista de transacoes que devem ser refeitas, fazemos o update com ela!
 
-# --- Disclaimer --- 
-# Não sei se a lógica pra selecionar qual as transacoes serão refeitas está certa.
-# Mas pelo oq eu entendi são as transações que são comittadas mas não tao em nenhum checkpoint
-# ------------------
-
 for x in range(len(transacoes)):
     if transacoes[x] in tCommitadas and transacoes[x] in tCKPT:
         tRedo.append(transacoes[x])
@@ -93,6 +92,11 @@ for x in range(len(transacoes)):
 print("\nTrasacoes que serão Refeitas:")
 for x in range(len(tRedo)):
     print(tRedo[x])
+
+
+# Possivel otimizar se validar qual a ultima transacao que altera um determinado campo de uma tupla
+# validar apenas esta operacao e aplica-la se necessario
+# Pensar em mudar como a montagem dos SQLs sao realizadas, admitidamente estao de maneira improvisada
 
 print("\nAcoes que serao refeitas")
 for x in range(len(acoes)):
