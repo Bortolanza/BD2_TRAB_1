@@ -88,16 +88,20 @@ for x in range(len(acoes)):
                                                       , re.sub("'", "", acoesValores[1])) # Formatacao string para consulta 
 
         result = dbConnectExec.connectExecuteDatabaseOperation(sql, 1)
-        valorTabela = re.sub("[^0-9]", "", str(result[0])) # Ajusta retorno da consulta
-                                                           # Com apenas 1 colunas a biblioteca
-                                                           # Adiciona uma virgula desnecessaria
-
+        valorTabela = result[0][0]
+    
         if acoesValores[4] != valorTabela:                       # Valida se update e necessario e caso sim, realiza
             dbConnectExec.execUpdate('%s = %s' %(re.sub("'", "", acoesValores[2]), re.sub("'", "", acoesValores[4]))
                                     , 'id = %s' % re.sub("'", "", acoesValores[1]) 
                                     ,'initial')
-                                    
-print(dbConnectExec.connectExecuteDatabaseOperation('SELECT * FROM initial', 1))
+
+print('\n Tabela após operações de REDO: \n')                                    
+print( '\t'+str(dbConnectExec.connectExecuteDatabaseOperation
+   ("""SELECT JSON_BUILD_OBJECT('INITIAL', JSON_BUILD_OBJECT('id', ARRAY_AGG(id)
+                                                           , 'A' , ARRAY_AGG(a)
+                                                           , 'B' , ARRAY_AGG(b))
+                                                                            )
+         FROM initial""", 1)[0][0]))
 
 
 
