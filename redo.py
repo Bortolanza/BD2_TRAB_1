@@ -1,5 +1,6 @@
 import json
 import dbConnectExec
+import re
 
 # ====== INSERINDO DADOS NO BANCO ===== #
 # ---- utilizando o metadados.json ---- #
@@ -92,3 +93,28 @@ print("\nAcoes que serao refeitas")
 for x in range(len(acoes)):
     if acoes[x][0] in tRedo:
         print(acoes[x])
+
+        values = re.sub('\]|\[', '', str(acoes[x])).split(',') # Ajusta a string para um vetor com as informacoes
+        
+        sql = "SELECT %s FROM initial WHERE id = %s" % (re.sub("'", "", values[2])
+                                                      , re.sub("'", "", values[1])) # Formatacao string para consulta 
+
+        result = dbConnectExec.connectExecuteDatabaseOperation(sql, 1)
+        tableValue = re.sub("[^0-9]", "", str(result[0])) # Ajusta retorno da consulta
+                                                          # Com apenas 1 colunas a biblioteca
+                                                          # Adiciona uma virgula desnecessaria
+
+        if values[4] != tableValue:                       # Valida se update e necessario e caso sim, realiza
+             dbConnectExec.execUpdate('%s = %s' %(re.sub("'", "", values[2])
+                                                , re.sub("'", "", values[4]))
+                                    , 'id = %s' % re.sub("'", "", values[1]) 
+                                    ,'initial') 
+
+
+
+
+
+
+
+
+

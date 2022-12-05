@@ -34,12 +34,12 @@ def connectExecuteDatabaseOperation(sql, type):
             return 1
 
 def execInsert(sql, table):
-    command = """INSERT INTO """+table+""" (id,a,b) VALUES """ + sql
+    command = 'INSERT INTO '+table+' (id,a,b) VALUES ' + sql
     print(command)
     connectExecuteDatabaseOperation(command, 0)
 
-def execUpdate(sql, table):
-    command = """UPDATE """+table+""" SET """ + sql + """WHERE """
+def execUpdate(sql, condition, table):
+    command = 'UPDATE '+table+' SET ' + sql + ' WHERE ' + condition
     print(command)
     connectExecuteDatabaseOperation(command, 0)    
 
