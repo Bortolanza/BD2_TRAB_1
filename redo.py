@@ -2,12 +2,6 @@ import json
 import dbConnectExec
 import re
 
-
-# Possivel implementar identificador de argumentos na execucao do programa
-# Ex: caminho dos arquivos e informacoes a respeito da base de dados
-# Retorno final em json? 
-# Separar em objetos? funcoes?
-
 # ====== INSERINDO DADOS NO BANCO ===== #
 # ---- utilizando o metadados.json ---- #
 # ===================================== #
@@ -47,59 +41,44 @@ tCKPT=[]
 acoes=[]
 tRedo=[]
 
-# Possivel brincar de otimizacao, olhando de baixo pra cima o arquivo
-# caso existir CKPT, buscar todas as operacoes ate o start das transacoes dentro da lista do CKPT que sofreram commit
-# para arquivos de log mais longos as checagens extras provavelmente sao mais eficientes 
-
 # Primeira passada pelo arquivo de log para identificar TRANSACOES, COMMITS E CKPT
 linhas = log.split('\n') # remove quebras de linha
+procurando=1
+achouCKPT=0
+linhas.reverse()
+
 for linha in linhas:
+    linha=linha.rstrip()
+    if(procurando==0):
+        break
     aux=linha.split(" ") #separa string da linha por espaço em branco
-    if aux[0]=="start":
-        transacoes.append(aux[1])
     if aux[0]=="commit":
         tCommitadas.append(aux[1])
-    if aux[0]=="CKPT":
+    if aux[0]=="CKPT" and not achouCKPT:
+        achouCKPT=1
         aux=str(re.sub('\(|\)', '', aux[1])).split(",") # remove parenteses da string da linha e separa ela pela ","
         for x in range(len(aux)):
-            tCKPT.append(aux[x])
+            if(aux[x] in tCommitadas):
+                tRedo.append(aux[x])
+        procurando=len(tRedo)
+    if aux[0]=="start":
+        if aux[1] in tRedo:
+            procurando=procurando-1
     aux=linha.split(",")
-    if aux[0] in transacoes:
+    if aux[0] in tCommitadas:
         acoes.append(aux)
 
-
-print("\nTransacoes Identificadas")
-for x in range(len(transacoes)):
-    print(transacoes[x])
-
-print("\nTransacoes Commitadas")
-for x in range(len(tCommitadas)):
-    print(tCommitadas[x])
-
-print("\nTransacoes em CHECKPOINT")
-for x in range(len(tCKPT)):
-    print(tCKPT[x])
-
-print("\nAcoes")
-for x in range(len(acoes)):
-    print(acoes[x])
-# Se a transacao da acao estiver na lista de transacoes que devem ser refeitas, fazemos o update com ela!
-
-for x in range(len(transacoes)):
-    if transacoes[x] in tCommitadas and transacoes[x] in tCKPT:
-        tRedo.append(transacoes[x])
+if not achouCKPT:   #Caso nao tenha achado checkpoint refaz tudo q encontrou e foi commitado
+    for x in range(len(tCommitadas)):
+        tRedo.append(tCommitadas[x])
 
 print("\nTrasacoes que serão Refeitas:")
 for x in range(len(tRedo)):
     print(tRedo[x])
 
-
-# Possivel otimizar se validar qual a ultima transacao que altera um determinado campo de uma tupla
-# validar apenas esta operacao e aplica-la se necessario
-# Pensar em mudar como a montagem dos SQLs sao realizadas, admitidamente estao de maneira improvisada
-
 print("\nAcoes que serao refeitas")
 for x in range(len(acoes)):
+    acoes.reverse()
     if acoes[x][0] in tRedo:
         print(acoes[x])
 
@@ -114,7 +93,7 @@ for x in range(len(acoes)):
                                                            # Adiciona uma virgula desnecessaria
 
         if acoesValores[4] != valorTabela:                       # Valida se update e necessario e caso sim, realiza
-             dbConnectExec.execUpdate('%s = %s' %(re.sub("'", "", acoesValores[2]), re.sub("'", "", acoesValores[4]))
+            dbConnectExec.execUpdate('%s = %s' %(re.sub("'", "", acoesValores[2]), re.sub("'", "", acoesValores[4]))
                                     , 'id = %s' % re.sub("'", "", acoesValores[1]) 
                                     ,'initial')
                                     
