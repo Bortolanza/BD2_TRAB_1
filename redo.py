@@ -2,12 +2,17 @@ import json
 import dbConnectExec
 import re
 
+
+# Possivel implementar identificador de argumentos na execucao do programa
+# Ex: caminho dos arquivos e informacoes a respeito da base de dados
+# Retorno final em json? 
+# Separar em objetos? funcoes?
+
 # ====== INSERINDO DADOS NO BANCO ===== #
 # ---- utilizando o metadados.json ---- #
 # ===================================== #
 
-#resultSet = dbConnectExec.connectExecuteDatabaseOperation("TRUNCATE initial;")
-#cursorDB = dbConnectExec.getConnectionCursor(connectionDB)
+dbConnectExec.connectExecuteDatabaseOperation("TRUNCATE initial;", 0)
 
 with open("metadado.json","r") as f: 
     dados = json.load(f) # Pegando os dados do arquivo
@@ -94,21 +99,24 @@ for x in range(len(acoes)):
     if acoes[x][0] in tRedo:
         print(acoes[x])
 
-        values = re.sub('\]|\[', '', str(acoes[x])).split(',') # Ajusta a string para um vetor com as informacoes
+        acoesValores = re.sub('\]|\[', '', str(acoes[x])).split(',') # Ajusta a string para um vetor com as informacoes
         
-        sql = "SELECT %s FROM initial WHERE id = %s" % (re.sub("'", "", values[2])
-                                                      , re.sub("'", "", values[1])) # Formatacao string para consulta 
+        sql = "SELECT %s FROM initial WHERE id = %s" % (re.sub("'", "", acoesValores[2])
+                                                      , re.sub("'", "", acoesValores[1])) # Formatacao string para consulta 
 
         result = dbConnectExec.connectExecuteDatabaseOperation(sql, 1)
-        tableValue = re.sub("[^0-9]", "", str(result[0])) # Ajusta retorno da consulta
-                                                          # Com apenas 1 colunas a biblioteca
-                                                          # Adiciona uma virgula desnecessaria
+        valorTabela = re.sub("[^0-9]", "", str(result[0])) # Ajusta retorno da consulta
+                                                           # Com apenas 1 colunas a biblioteca
+                                                           # Adiciona uma virgula desnecessaria
 
-        if values[4] != tableValue:                       # Valida se update e necessario e caso sim, realiza
-             dbConnectExec.execUpdate('%s = %s' %(re.sub("'", "", values[2])
-                                                , re.sub("'", "", values[4]))
-                                    , 'id = %s' % re.sub("'", "", values[1]) 
-                                    ,'initial') 
+        if acoesValores[4] != valorTabela:                       # Valida se update e necessario e caso sim, realiza
+             dbConnectExec.execUpdate('%s = %s' %(re.sub("'", "", acoesValores[2])
+                                                , re.sub("'", "", acoesValores[4]))
+                                    , 'id = %s' % re.sub("'", "", acoesValores[1]) 
+                                    ,'initial')
+                                    
+print(dbConnectExec.connectExecuteDatabaseOperation('SELECT * FROM initial', 1))
+
 
 
 
