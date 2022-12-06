@@ -18,3 +18,10 @@ h1. *Modificacoes possivelmente necessarias*
 * Outra possivel alteracao tem relacao com o nome da tabela, para ajustar basta alterar o valor 
   informado na variavel "nomeTabela" para o nome da tabela correta. Esta variavel se encontra no
   arquivo redo.py, linha 14
+
+h1. *Requisitos*
+
+* E necessario possuir a biblioteca "psycopg2", pois atraves dela e realizada a conexao com o banco
+
+* * Instalacao em ambiente linux basta executar o seguinte comando:
+    pip install psycopg2
