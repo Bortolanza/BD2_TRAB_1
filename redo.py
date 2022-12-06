@@ -17,9 +17,9 @@ sql = ""
 dbConnectExec.connectExecuteDatabaseOperation("TRUNCATE %s;" % re.sub("'", "",nomeTabela), 0)
 
 for x in range(len(dados['A'])):
-    #Aqui ira o comando para inserir no BD
-    print("INSERT INTO"+re.sub("'", "",nomeTabela)+"(id,a,b) VALUES ("+str(x+1)+","+str((dados['A'][x]))+","+  str((dados['B'][x]))+")")
-    #Apos funcao que insere ser feita comentar/remover print acima
+
+    print("INSERT INTO "+re.sub("'", "",nomeTabela)+"(id,a,b) VALUES ("+str(x+1)+","+str((dados['A'][x]))+","+  str((dados['B'][x]))+")")
+    
     if (x == 0):
         sql = "("+str(x+1)+","+str((dados['A'][x]))+","+  str((dados['B'][x]))+")"
     else:
@@ -73,11 +73,11 @@ if not achouCKPT:   #Caso nao tenha achado checkpoint refaz tudo q encontrou e f
     for x in range(len(tCommitadas)):
         tRedo.append(tCommitadas[x])
 
-print("\nTrasacoes que serão Refeitas:")
+print("\nTransações que serão refeitas:")
 for x in range(len(tRedo)):
     print(tRedo[x])
 
-print("\nAcoes que serao refeitas")
+print("\nAções que serao refeitas:")
 acoes.reverse()
 for x in range(len(acoes)):
     if acoes[x][0] in tRedo:
