@@ -78,8 +78,8 @@ for x in range(len(tRedo)):
     print(tRedo[x])
 
 print("\nAcoes que serao refeitas")
+acoes.reverse()
 for x in range(len(acoes)):
-    acoes.reverse()
     if acoes[x][0] in tRedo:
         print(acoes[x])
 
