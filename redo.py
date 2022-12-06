@@ -6,25 +6,26 @@ import re
 # ---- utilizando o metadados.json ---- #
 # ===================================== #
 
-dbConnectExec.connectExecuteDatabaseOperation("TRUNCATE initial;", 0)
-
 with open("metadado.json","r") as f: 
     dados = json.load(f) # Pegando os dados do arquivo
 f.close()
 
 dados = dados["INITIAL"]
+nomeTabela = 'initial'
 sql = "" 
+
+dbConnectExec.connectExecuteDatabaseOperation("TRUNCATE %s;" % re.sub("'", "",nomeTabela), 0)
 
 for x in range(len(dados['A'])):
     #Aqui ira o comando para inserir no BD
-    print("INSERT INTO initial (id,a,b) VALUES ("+str(x+1)+","+str((dados['A'][x]))+","+  str((dados['B'][x]))+")")
+    print("INSERT INTO"+re.sub("'", "",nomeTabela)+"(id,a,b) VALUES ("+str(x+1)+","+str((dados['A'][x]))+","+  str((dados['B'][x]))+")")
     #Apos funcao que insere ser feita comentar/remover print acima
-    if (sql == ""):
+    if (x == 0):
         sql = "("+str(x+1)+","+str((dados['A'][x]))+","+  str((dados['B'][x]))+")"
     else:
         sql = sql + ",("+str(x+1)+","+str((dados['A'][x]))+","+  str((dados['B'][x]))+")"
 
-result = dbConnectExec.execInsert(sql, "initial")
+result = dbConnectExec.execInsert(sql, re.sub("'", "",nomeTabela))
 
 # ========== REALIZANDO UNDO ========== #
 # -------- utilizando o log.txt ------- #
@@ -84,8 +85,9 @@ for x in range(len(acoes)):
 
         acoesValores = re.sub('\]|\[', '', str(acoes[x])).split(',') # Ajusta a string para um vetor com as informacoes
         
-        sql = "SELECT %s FROM initial WHERE id = %s" % (re.sub("'", "", acoesValores[2])
-                                                      , re.sub("'", "", acoesValores[1])) # Formatacao string para consulta 
+        sql = "SELECT %s FROM %s WHERE id = %s" % (re.sub("'", "", acoesValores[2])
+                                                 , re.sub("'", "", nomeTabela)
+                                                 , re.sub("'", "", acoesValores[1])) # Formatacao string para consulta 
 
         result = dbConnectExec.connectExecuteDatabaseOperation(sql, 1)
         valorTabela = result[0][0]
@@ -93,7 +95,7 @@ for x in range(len(acoes)):
         if acoesValores[4] != valorTabela:                       # Valida se update e necessario e caso sim, realiza
             dbConnectExec.execUpdate('%s = %s' %(re.sub("'", "", acoesValores[2]), re.sub("'", "", acoesValores[4]))
                                     , 'id = %s' % re.sub("'", "", acoesValores[1]) 
-                                    ,'initial')
+                                    ,re.sub("'", "",nomeTabela))
 
 print('\n Tabela após operações de REDO: \n')                                    
 print( '\t'+str(dbConnectExec.connectExecuteDatabaseOperation
@@ -101,7 +103,7 @@ print( '\t'+str(dbConnectExec.connectExecuteDatabaseOperation
                                                            , 'A' , ARRAY_AGG(a)
                                                            , 'B' , ARRAY_AGG(b))
                                                                             )
-         FROM initial""", 1)[0][0]))
+         FROM %s""" %re.sub("'", "",nomeTabela), 1)[0][0]))
 
 
 
