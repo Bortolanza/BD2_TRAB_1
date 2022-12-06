@@ -1,7 +1,7 @@
 h1. *Integrantes*
 
 * Enzo H. Bortolanza
-* Fernando de Souza 
+* Fernando F. de Souza 
 
 h1. *Modificacoes possivelmente necessarias*
 
